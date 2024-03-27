@@ -31,3 +31,7 @@ Configure Src/LaPlateforme/settings.py with your credentials and execute to migr
 ```sh
 python manage.py migrate                                                                                                                             
 ```
+Start web app with 
+```sh
+python manage.py runserver                 
+```
