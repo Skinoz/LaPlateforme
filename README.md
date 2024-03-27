@@ -6,7 +6,7 @@ Developement Environement :
 
 create venv :
 ```sh
-  python3 -m venv PATH
+python3 -m venv PATH
 ```
 
 Activate venv :
