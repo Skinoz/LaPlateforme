@@ -31,9 +31,16 @@ Configure Src/LaPlateforme/settings.py with your credentials and execute to migr
 ```sh
 python manage.py migrate                                                                                                                             
 ```
-Start web app with 
+Start app with 
 ```sh
 python manage.py runserver                 
 ```
 
-Webhook test
+If you would like to vue web app you need to install node js and npm to continue with 
+```sh
+npm install 
+```
+Start a developement server
+```sh
+npm run serve 
+```
