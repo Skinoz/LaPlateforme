@@ -1,13 +1,12 @@
 <template>
-  <header class="bg-[#051A26] flex justify-between py-5 px-7">
-    <div class="flex">
+  <header class="bg-[#051A26] flex justify-between navbar-height px-7">
+    <div class="flex items-center justify-center">
       <!-- Add "scoped" attribute to limit CSS to this component only -->
       <img class="h-10" src="../assets/LP.png" alt="Workcation">
-      <div  :class="isOpen ? 'hidden' : 'block'" class="px-2 pt-2 pb-4 hidden sm:flex sm:p-0 items-center">
-        <a href="#" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</a>
-        <a href="#" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg ">Paramètre du serveur</a>
-        <a href="#" class="mt-1 block px-2 py-1 text-[#d9caad] text-lg font-semibold rounded hover:bg-gray-800 sm:mt-0 sm:ml-2">Ceci test</a>
-      </div>
+    </div>
+    <div :class="isOpen ? 'hidden' : 'block'" class="px-2 pt-2 pb-4 hidden sm:flex sm:p-0 items-center justify-center">
+      <router-link v-if="store.state.isAuthenticated" to="/network" class="block px-5 py-1 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</router-link>
+      <router-link to="/" class="block px-5 py-1 font-semibold rounded text-[#d9caad] text-lg bold ">Home</router-link>
     </div>
     <div :class="isOpen ? 'hidden' : 'block'" class="px-2 pt-2 pb-4 hidden sm:flex sm:p-0 items-center">
       <a href="#" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg bold">Login</a>
@@ -21,17 +20,14 @@
       </button>
     </div>
   </header>
-  <div  :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:p-0 bg-[#051A26] rounded-xl mt-5 mx-2 grid grid-cols-3 divide-x-2">
+  <div  :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:p-0 sm:hidden bg-[#051A26] rounded-xl mt-5 mx-2 grid grid-cols-3 divide-x-2">
     <!-- Partie Gauche Phone Bar -->
     <div class="grid grid-cols-1 col-span-2 text-left divide-y-2 items-center">
       <div class="text-center rounded">
-        <a href="#" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</a>
+        <router-link to="/network" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</router-link>
       </div>
       <div class="text-center rounded">
-        <a href="#" class="block px-2 py-2  font-semibold rounded text-[#d9caad] text-lg bold ">Paramètre du serveur</a>
-      </div>
-      <div class=" text-center rounded">
-        <a href="#" class="block px-2 py-2  font-semibold rounded text-[#d9caad] text-lg bold ">Ceci test</a>
+        <router-link to="/" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Home</router-link>
       </div>
     </div>
     <!-- Partie droite Phone Bar -->
@@ -47,15 +43,32 @@
 </template>
 
 <script lang="ts">
+import { useStore } from 'vuex'
+import axios from 'axios'
+
 export default {
   name: 'NavigationBar',
-  data () {
+  setup () {
+    const store = useStore()
+
+    store.commit('initializeStore')
+    const token = store.state.token
+    axios.defaults.headers.common.Authorization = token ? `Token ${token}` : ''
+
     return {
-      isOpen: false
+      isOpen: false,
+      store
     }
   }
 }
 </script>
+
+<style>
+.navbar-height{
+ height: 70px
+}
+</style>
+
 <!-- Add "scoped" attribute to limit CSS to this component only
 <div class="px-4 py-3 sm:p-0">
   <div>

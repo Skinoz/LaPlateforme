@@ -1,20 +1,47 @@
 <script setup lang="ts">
-const nodes = { node1: { name: 'Node 1' }, node2: { name: 'Node 2' }, node3: { name: 'Node 3' }, node4: { name: 'Node 4' } }
-const edges = { edge1: { source: 'node1', target: 'node2' }, edge2: { source: 'node2', target: 'node3' }, edge3: { source: 'node3', target: 'node4' } }
+import { defineConfigs } from 'v-network-graph'
+import data from '../data/data'
+
+const configs = defineConfigs({
+  node: {
+    selectable: true,
+    scalingObjects: true
+  }
+})
 </script>
 
 <template>
-  <v-network-graph
-    class="graph"
-    :nodes="nodes"
-    :edges="edges"
-  />
+  <div class="flex">
+    <div class="graph-container">
+      <v-network-graph
+        class="graph"
+        :nodes="data.nodes"
+        :edges="data.edges"
+        :layouts="data.layouts"
+        :configs="configs"
+      />
+    </div>
+    <div class="bg-[#072637]">
+      <div class="bg-[#051A26] border-2 p-4">
+        <h1 class="font-semibold text-white w-40">Vm List</h1>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>
+.graph-container {
+  width: 100%;
+  height: calc(100vh - 70px); /* 70px is the height of the navigation bar */
+  display: flex;
+  justify-content: center; /* Centrer horizontalement */
+  align-items: center; /* Centrer verticalement */
+}
+
 .graph {
-  width: 800px;
-  height: 600px;
-  border: 1px solid #000;
+  width: 100%; /* Utilise toute la largeur de son parent */
+  height: 100%; /* Utilise toute la hauteur de son parent */
+  max-width: 100%; /* Ne dépasse pas la largeur de son parent */
+  max-height: 100%; /* Ne dépasse pas la hauteur de son parent */
 }
 </style>
