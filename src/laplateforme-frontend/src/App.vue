@@ -3,7 +3,9 @@
     <div id="app" class="">
       <NavigationBar/>
     </div>
-    <router-view/>
+    <div>
+      <router-view/>
+    </div>
   </div>
 </template>
 
