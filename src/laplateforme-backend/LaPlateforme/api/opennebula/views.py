@@ -1,6 +1,12 @@
 from django.http import JsonResponse
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from pyone import OneServer
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_vm_list(request):
     # Connexion à l'hyperviseur OpenNebula
     one = OneServer("http://192.168.1.1:2633/RPC2", session="oneadmin:Gtxt4mLMSKJKQLAeKyFQ")

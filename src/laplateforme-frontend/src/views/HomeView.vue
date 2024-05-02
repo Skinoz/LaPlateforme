@@ -27,27 +27,26 @@ export default {
   methods: {
     loadIframe () {
       // Demander le JWT
-      fetch('http://192.168.1.1:2616/fireedge/api/auth', {
-        method: 'POST',
+      fetch('http://192.168.1.1:2616/fireedge/api/auth/', {
+        method: 'POST', // Utilisez la méthode POST
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          user: process.env.VUE_APP_USERNAME,
-          token: process.env.VUE_APP_TOKEN
+          username: process.env.VUE_APP_USERNAME_OPENNEBULA,
+          token: process.env.VUE_APP_PASSWORD_OPENNEBULA
         })
       })
         .then(response => response.json())
         .then(data => {
-          console.log('user:', process.env.VUE_APP_USERNAME)
-          console.log('token:', process.env.VUE_APP_TOKEN)
-          // Récupérer le token JWT
-          this.token = data.data.token
+          console.log('user:', process.env.VUE_APP_USERNAME_OPENNEBULA)
+          console.log('Password:', process.env.VUE_APP_PASSWORD_OPENNEBULA)
+          console.log('token:', data.token) // Récupérer le token JWT du backend
           // Show the iframe
           this.showIframe = true
           // Load the iframe source after showing
           this.$nextTick(() => {
-            this.$refs.iframe.src = `http://192.168.1.1:2616/fireedge/sunstone/guacamole/12/vnc?externalToken=${this.token}`
+            this.$refs.iframe.src = `http://192.168.1.1:2616/fireedge/sunstone/guacamole/12/vnc?externalToken=${data.token}`
             this.$refs.iframe.focus()
           })
         })

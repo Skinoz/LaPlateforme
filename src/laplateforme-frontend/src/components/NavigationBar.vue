@@ -1,4 +1,7 @@
 <template>
+  <div>
+
+  </div>
   <header class="bg-[#051A26] flex justify-between navbar-height px-7">
     <div class="flex items-center justify-center">
       <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -8,8 +11,12 @@
       <router-link v-if="store.state.isAuthenticated" to="/network" class="block px-5 py-1 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</router-link>
       <router-link to="/" class="block px-5 py-1 font-semibold rounded text-[#d9caad] text-lg bold ">Home</router-link>
     </div>
-    <div :class="isOpen ? 'hidden' : 'block'" class="px-2 pt-2 pb-4 hidden sm:flex sm:p-0 items-center">
-      <a href="#" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg bold">Login</a>
+    <div v-if="!store.state.isAuthenticated" :class="isOpen ? 'hidden' : 'block'" class="px-2 pt-2 pb-4 hidden sm:flex sm:p-0 items-center">
+      <router-link to="login" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg bold">Connexion</router-link>
+      <router-link to="signup" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg bold">Inscription</router-link>
+    </div>
+    <div v-if="store.state.isAuthenticated" class="px-2 pt-2 pb-4 hidden sm:flex sm:p-0 items-center">
+      <button @click="logout" class="block px-2 py-1 font-semibold rounded text-[#d9caad] text-lg bold">Déconnexion</button>
     </div>
     <div class="sm:hidden">
       <button @click="isOpen = !isOpen" type="button" class="block text-gray-500 hover:text-white focus:text-white focus:outline-none">
@@ -43,6 +50,7 @@
 </template>
 
 <script lang="ts">
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import axios from 'axios'
 
@@ -50,13 +58,42 @@ export default {
   name: 'NavigationBar',
   setup () {
     const store = useStore()
+    const router = useRouter()
 
     store.commit('initializeStore')
     const token = store.state.token
+
+    // Définir le token par défaut pour toutes les requêtes axios
     axios.defaults.headers.common.Authorization = token ? `Token ${token}` : ''
+
+    // Interceptor pour ajouter le token à chaque requête axios
+    axios.interceptors.request.use((config) => {
+      const token = store.state.token
+      if (token) {
+        config.headers.Authorization = `Token ${token}`
+      }
+      return config
+    }, (error) => {
+      return Promise.reject(error)
+    })
+
+    const logout = () => {
+      const token = localStorage.getItem('token')
+      // API call to logout with djoser endpoint
+      axios
+        .post(process.env.VUE_APP_PROTOCOL + '://' + process.env.VUE_APP_HOST_BACKEND_SERVER + ':' + process.env.VUE_APP_PORT + '/api/v1/token/logout/')
+        .then(response => {
+          axios.defaults.headers.common.Authorization = ''
+          localStorage.removeItem('token')
+          store.commit('removeToken')
+          router.push({ name: 'home' })
+        })
+      console.log(token)
+    }
 
     return {
       isOpen: false,
+      logout,
       store
     }
   }
