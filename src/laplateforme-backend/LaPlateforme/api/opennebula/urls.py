@@ -1,9 +1,9 @@
 from django.urls import path
-from . import views
-from .token import Token
+from . import views, token
 
 urlpatterns = [
     path('vm-list/', views.get_vm_list, name='get_vm_list'),
-    path('token/', Token.as_view(), name='get_auth_token'),
+    path('networks/', views.get_network_list, name='get_network_list'),
+    path('token/', token.get_token, name='get_token'),
     # You can add more endpoints here
 ]

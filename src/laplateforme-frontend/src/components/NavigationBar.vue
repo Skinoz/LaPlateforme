@@ -1,8 +1,5 @@
 <template>
-  <div>
-
-  </div>
-  <header class="bg-[#051A26] flex justify-between navbar-height px-7">
+  <header class="bg-[#051A26] flex justify-between navbar-height px-7 z-100 relative">
     <div class="flex items-center justify-center">
       <!-- Add "scoped" attribute to limit CSS to this component only -->
       <img class="h-10" src="../assets/LP.png" alt="Workcation">
@@ -26,27 +23,27 @@
         </svg>
       </button>
     </div>
+    <div  :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:p-0 sm:hidden bg-[#051A26] rounded-xl mt-5 mx-2 grid grid-cols-3 divide-x-2">
+      <!-- Partie Gauche Phone Bar -->
+      <div class="grid grid-cols-1 col-span-2 text-left divide-y-2 items-center">
+        <div class="text-center rounded">
+          <router-link to="/network" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</router-link>
+        </div>
+        <div class="text-center rounded">
+          <router-link to="/" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Home</router-link>
+        </div>
+      </div>
+      <!-- Partie droite Phone Bar -->
+      <div>
+        <div class=" text-center rounded m-3">
+          <a href="#" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Connexion</a>
+        </div>
+        <div class=" text-center rounded m-3">
+            <a href="#" class="block px-2 py-2  font-semibold rounded text-[#d9caad] text-lg bold ">S'enregistrer</a>
+        </div>
+      </div>
+    </div>
   </header>
-  <div  :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:p-0 sm:hidden bg-[#051A26] rounded-xl mt-5 mx-2 grid grid-cols-3 divide-x-2">
-    <!-- Partie Gauche Phone Bar -->
-    <div class="grid grid-cols-1 col-span-2 text-left divide-y-2 items-center">
-      <div class="text-center rounded">
-        <router-link to="/network" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Graphique du réseau</router-link>
-      </div>
-      <div class="text-center rounded">
-        <router-link to="/" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Home</router-link>
-      </div>
-    </div>
-    <!-- Partie droite Phone Bar -->
-    <div>
-      <div class=" text-center rounded m-3">
-        <a href="#" class="block px-2 py-2 font-semibold rounded text-[#d9caad] text-lg bold ">Connexion</a>
-      </div>
-      <div class=" text-center rounded m-3">
-          <a href="#" class="block px-2 py-2  font-semibold rounded text-[#d9caad] text-lg bold ">S'enregistrer</a>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script lang="ts">

@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'GuacamoleRedirect',
   data () {
@@ -27,26 +28,14 @@ export default {
   methods: {
     loadIframe () {
       // Demander le JWT
-      fetch('http://192.168.1.1:2616/fireedge/api/auth/', {
-        method: 'POST', // Utilisez la méthode POST
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: process.env.VUE_APP_USERNAME_OPENNEBULA,
-          token: process.env.VUE_APP_PASSWORD_OPENNEBULA
-        })
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('user:', process.env.VUE_APP_USERNAME_OPENNEBULA)
-          console.log('Password:', process.env.VUE_APP_PASSWORD_OPENNEBULA)
-          console.log('token:', data.token) // Récupérer le token JWT du backend
+      axios.post('http://localhost:8000/api/v1/opennebula/token/', { username: 'oneadmin', password: process.env.VUE_APP_PASSWORD_OPENNEBULA })
+        .then(response => {
+          console.log('token:', response.data.token) // Récupérer le token JWT du backend
           // Show the iframe
           this.showIframe = true
           // Load the iframe source after showing
           this.$nextTick(() => {
-            this.$refs.iframe.src = `http://192.168.1.1:2616/fireedge/sunstone/guacamole/12/vnc?externalToken=${data.token}`
+            this.$refs.iframe.src = `http://192.168.1.1:2616/fireedge/sunstone/guacamole/12/vnc?externalToken=${response.data.token}`
             this.$refs.iframe.focus()
           })
         })

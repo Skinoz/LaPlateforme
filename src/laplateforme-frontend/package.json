@@ -12,7 +12,11 @@
     "autoprefixer": "^10",
     "axios": "^1.6.8",
     "core-js": "^3.8.3",
+    "d3-force": "^3.0.0",
+    "dagre": "^0.8.5",
     "postcss": "^8",
+    "sass": "^1.76.0",
+    "sass-loader": "^14.2.1",
     "tailwindcss": "^3",
     "v-network-graph": "^0.9.15",
     "vue": "^3.2.13",
@@ -21,6 +25,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@types/d3-force": "^3.0.9",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^20.12.7",
