@@ -88,7 +88,7 @@
 <script lang="ts">
 import { ref, onMounted, computed, nextTick } from 'vue'
 import axios from 'axios'
-import { defineConfigs, EventHandlers, GridLayout, Node } from 'v-network-graph'
+import { defineConfigs, EventHandlers } from 'v-network-graph'
 import { ForceLayout, ForceNodeDatum, ForceEdgeDatum } from 'v-network-graph/lib/force-layout'
 
 interface NIC {
@@ -152,7 +152,6 @@ const configs = defineConfigs({
     layoutHandler: new ForceLayout({
       positionFixedByDrag: false,
       positionFixedByClickWithAltKey: false,
-      noAutoRestartSimulation: false,
       createSimulation: (d3, nodes, edges) => {
         const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id(d => d.id)
         const simulation = d3.forceSimulation(nodes)
@@ -160,9 +159,8 @@ const configs = defineConfigs({
           .force('charge', d3.forceManyBody().strength(-2000))
           .force('x', d3.forceX())
           .force('y', d3.forceY())
-          .stop() // tick manually
-          .tick(100)
-
+          .tick(10)
+        simulation.stop()
         return simulation
       }
     })
@@ -187,13 +185,11 @@ export default {
   name: 'NetworkGraph',
   setup () {
     const networkList = ref<Network[]>([])
+    const vmList = ref<VM[]>([])
     const selectedNode = ref<VM | null>(null)
     const iframeRef = ref<HTMLIFrameElement | null>(null)
     const showIframe = ref(false)
     const iframeSrc = ref('')
-
-    // Load positions of nodes and edges from localStorage
-    const savedPositions = JSON.parse(localStorage.getItem('networkGraphPositions') || '{}')
 
     onMounted(async () => {
       try {
@@ -204,24 +200,23 @@ export default {
         const vms: VM[] = vmResponse.data
         const networks: Network[] = networkResponse.data
 
-        // Load positions of nodes and edges from localStorage
-        const loadedNodes = savedPositions.nodes || {}
-        const loadedEdges = savedPositions.edges || {}
-
         console.log('VMs:', vms)
         console.log('Networks:', networks)
 
+        vmList.value = vms.map(vm => {
+          return {
+            ...vm,
+            id: `vm-${vm.id}` // Prefixing VM ID with "vm-"
+          }
+        })
+        console.log('VM List:', vmList.value)
         // Associate virtual machines with corresponding virtual networks
         networkList.value = networks.map(network => {
           const networkId = network.id
           const uniqueVMs = network.vms.map(vm => {
-            // Load positions of nodes from localStorage
-            const position = loadedNodes[vm.id] || { x: 0, y: 0 }
             return {
               ...vm,
-              id: `vm-${vm.id}`, // Prefixing VM ID with "vm-"
-              x: position.x,
-              y: position.y
+              id: `vm-${vm.id}` // Prefixing VM ID with "vm-"
             }
           })
           return { ...network, id: `network-${networkId}`, vms: uniqueVMs } // Prefixing network ID with "network-"
@@ -239,6 +234,7 @@ export default {
           nodeMap[vm.id] = vm
         })
       })
+      console.log('NodesMap:', nodeMap) // Log the nodeMap
       return nodeMap
     })
 
@@ -253,26 +249,41 @@ export default {
       })
       console.log('Edges:', edgeMap) // Log the edgeMap
 
-      // Load positions of edges from localStorage
-      Object.keys(savedPositions.edges || {}).forEach(edgeId => {
-        edgeMap[edgeId] = savedPositions.edges[edgeId]
-      })
-
       return edgeMap
     })
 
     const layouts = computed(() => {
       const networkCount = networkList.value.length
-      const networkLayouts: Record<string, { x: number; y: number; fixed: boolean }> = {}
+      console.log('Network Count:', networkCount)
+      const networkLayouts: Record<string, { x?: number; y?: number; fixed: boolean }> = {}
       const radius = 250
       const centerX = 200 // Adjust as necessary
       const centerY = 200 // Adjust as necessary
-      networkList.value.forEach((network, index) => {
-        const angle = (index / networkCount) * 2 * Math.PI
-        const x = centerX + radius * Math.cos(angle)
-        const y = centerY + radius * Math.sin(angle)
-        networkLayouts[network.id] = { x, y, fixed: true }
+      vmList.value.forEach((vm, index) => {
+        const savedPosition = localStorage.getItem(`${vm.id}-position`)
+        if (savedPosition) {
+          networkLayouts[vm.id] = JSON.parse(savedPosition)
+          networkLayouts[vm.id].fixed = true
+        } else {
+          const angle = (index / networkCount) * 2 * Math.PI
+          const x = undefined
+          const y = undefined
+          networkLayouts[vm.id] = { x, y, fixed: true }
+        }
       })
+      networkList.value.forEach((network, index) => {
+        const savedPosition = localStorage.getItem(`${network.id}-position`)
+        if (savedPosition) {
+          networkLayouts[network.id] = JSON.parse(savedPosition)
+          networkLayouts[network.id].fixed = true
+        } else {
+          const angle = (index / networkCount) * 2 * Math.PI
+          const x = centerX + radius * Math.cos(angle)
+          const y = centerY + radius * Math.sin(angle)
+          networkLayouts[network.id] = { x, y, fixed: true }
+        }
+      })
+      console.log('Network Layout :', networkLayouts)
       return { nodes: networkLayouts }
     })
 
@@ -287,6 +298,14 @@ export default {
       'node:dblclick': ({ node }) => {
         const vm = nodes.value[node] as VM
         loadIframe(vm.id)
+      },
+      'node:dragend': (event) => {
+        Object.keys(event).forEach(key => {
+          console.log(key, event[key])
+          if (event[key]) {
+            localStorage.setItem(`${key}-position`, JSON.stringify(event[key]))
+          }
+        })
       }
     }
 
