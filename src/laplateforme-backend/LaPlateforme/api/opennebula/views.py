@@ -42,13 +42,11 @@ def get_network_list(request):
         network_info = {
             "id": network.get_ID(),
             "name": network.get_NAME(),
+            "bridge": network.get_BRIDGE(),
             "vms": []  # Liste des machines virtuelles associées à ce réseau
         }
         print("Network info ", network_info)
         for vm in vms:
-            print("-------------------")
-            print("VM Name ", vm.get_NAME())
-            print("VM info ", vm.get_TEMPLATE())
             vm_template = vm.get_TEMPLATE()
             if vm_template and 'NIC' in vm_template:
                 nics = vm_template['NIC']
@@ -74,5 +72,4 @@ def get_network_list(request):
 
         network_list.append(network_info)
 
-    print(network_list)
     return JsonResponse(network_list, safe=False)

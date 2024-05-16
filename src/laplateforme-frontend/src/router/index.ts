@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import NetworkGraph from '../views/NetworkGraph.vue'
+import NetworkGraph from '../views/Nebula/NebulaGraph.vue'
 import LogIn from '../views/LogIn.vue'
 import SignUp from '../views/SignUp.vue'
 

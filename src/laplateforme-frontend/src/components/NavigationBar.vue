@@ -79,7 +79,7 @@ export default {
       // API call to logout with djoser endpoint
       axios
         .post(process.env.VUE_APP_PROTOCOL + '://' + process.env.VUE_APP_HOST_BACKEND_SERVER + ':' + process.env.VUE_APP_PORT + '/api/v1/token/logout/')
-        .then(response => {
+        .then(() => {
           axios.defaults.headers.common.Authorization = ''
           localStorage.removeItem('token')
           store.commit('removeToken')

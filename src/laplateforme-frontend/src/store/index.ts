@@ -30,7 +30,7 @@ const store: Store<State> = createStore({
   mutations: {
     initializeStore (state: State) {
       if (localStorage.getItem('token')) {
-        state.token = localStorage.getItem('token')!
+        state.token = localStorage.getItem('token') || ''
         state.isAuthenticated = true
       } else {
         state.token = ''
